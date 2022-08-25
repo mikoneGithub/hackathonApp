@@ -47,9 +47,9 @@ class BoardView @JvmOverloads constructor(
 
     private val rect = Rect()
 
-    val framesPerStep = 15 //  == 1 / speed
-    var frame = 0
-    var running = true
+    private val framesPerStep = 15 //  == 1 / speed
+    private var frame = 0
+    private var running = true
 
     // TODO KON: Hier hätte ich gerne die Callbacks von den Buttons
     fun pauseTapped() {}
@@ -59,7 +59,8 @@ class BoardView @JvmOverloads constructor(
         super.onAttachedToWindow()
 
         launch {
-            engine.path = router.solve(width, height, engine.world, engine.origin, engine.destination)
+            engine.path =
+                router.solve(width, height, engine.world, engine.origin, engine.destination)
 
             while (true) {
                 invalidate()
@@ -78,19 +79,19 @@ class BoardView @JvmOverloads constructor(
 
         // draw world
 
-        val size = canvas.width / engine.columns
+        val size = width / engine.columns
 
-        for (y in 0..engine.rows - 1) {
-            for (x in 0..engine.columns - 1) {
+        for (y in 0 until engine.rows) {
+            for (x in 0 until engine.columns) {
                 val x1 = x * size
                 val x2 = x1 + size
                 val y1 = y * size
                 val y2 = y1 + size
-                val r = Rect(x1, y1, x2, y2)
+                rect.set(x1, y1, x2, y2)
 
                 val type = engine.world[x][y]
                 paint.color = colors[type]
-                canvas.drawRect(r, paint)
+                canvas.drawRect(rect, paint)
 
                 when (type) {
                     fCoin -> {
@@ -120,17 +121,19 @@ class BoardView @JvmOverloads constructor(
         val d = frame.toDouble() / framesPerStep.toDouble()
         val d1 = 1.0 - d
 
-        val x1 = (engine.position.x.toDouble() * d + engine.lastPosition.x.toDouble() * d1) * size.toDouble()
+        val x1 =
+            (engine.position.x.toDouble() * d + engine.lastPosition.x.toDouble() * d1) * size.toDouble()
         val x2 = x1 + size
-        val y1 = (engine.position.y.toDouble() * d + engine.lastPosition.y.toDouble() * d1) * size.toDouble()
+        val y1 =
+            (engine.position.y.toDouble() * d + engine.lastPosition.y.toDouble() * d1) * size.toDouble()
         val y2 = y1 + size
 
-        val r = Rect(x1.roundToInt(), y1.roundToInt(), x2.roundToInt(), y2.roundToInt())
+        rect.set(x1.roundToInt(), y1.roundToInt(), x2.roundToInt(), y2.roundToInt())
         paint.color = Color.GREEN
-        canvas.drawRect(r, paint)
+        canvas.drawRect(rect, paint)
 
-        paint.setColor(Color.BLACK);
-        paint.setTextSize(60F);
+        paint.color = Color.BLACK
+        paint.textSize = 60F
         canvas.drawText("${engine.position}", 20F, 1200F, paint)
     }
 }
