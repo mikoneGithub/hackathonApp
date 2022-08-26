@@ -130,7 +130,7 @@ class BoardView @JvmOverloads constructor(
 
         if (frame == framesPerStep) {
             // step frame
-            engine.step()
+            running = engine.step()
             frame = 0
         } else {
             // regular drawing frame

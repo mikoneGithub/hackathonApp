@@ -23,7 +23,7 @@ class Engine {
     val columns = 33
 
     val origin: Point = Point(0, 1)
-    val destination: Point = Point(9, 9)
+    val destination: Point = Point(columns - 1, rows - 2)
     var path: IntArray = intArrayOf()
     var step = 0
 
@@ -50,14 +50,14 @@ class Engine {
         return
     }
 
-    fun step() {
+    fun step() : Boolean {
         print(step)
         print(path.size)
 
         if (step >= path.size) {
             step = 0
             position = Point(origin.x, origin.y)
-            return
+            return false
         }
 
         val old = Point(position.x, position.y)
@@ -79,12 +79,14 @@ class Engine {
                 // fail
                 print("You walked into a wall")
                 position = old
+                return false
             } else {
                 lastPosition = Point(old.x, old.y)
                 world[position.x][position.y] = 2
             }
 
         step++
+        return true
 
         /*
         for (x in 0..rows - 1) {
