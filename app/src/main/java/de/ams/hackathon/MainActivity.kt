@@ -47,11 +47,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnPlus.setOnClickListener {
-            setLevel(binding, min(currentLevel + 1, items.size - 1))
+            binding.boardView.onPlusPressed()
         }
 
         binding.btnMinus.setOnClickListener {
-            setLevel(binding, max(currentLevel - 1, 0))
+            binding.boardView.onMinusPressed()
         }
 
         (binding.dropdownLevel.editText as? AutoCompleteTextView)?.setOnItemClickListener { _, _, i, _ ->

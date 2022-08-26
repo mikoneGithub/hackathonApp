@@ -22,6 +22,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.lang.Integer.max
+import java.lang.Integer.min
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.roundToInt
 
@@ -59,23 +61,29 @@ class BoardView @JvmOverloads constructor(
 
     private val rect = Rect()
 
-    private val framesPerStep = 15 //  == 1 / speed
+    private var framesPerStep = 2 //  == 1 / speed
     private var frame = 0
     private var running = true
 
     fun onPlayPressed() {
-        // TODO NOT IMPLEMENTED YET
-        Log.d("BoardView", "onPlayPressed")
+        running = true
     }
 
     fun onPausePressed() {
-        // TODO NOT IMPLEMENTED YET
-        Log.d("BoardView", "onPausePressed")
+        running = false
     }
 
     fun onBackPressed() {
-        // TODO NOT IMPLEMENTED YET
-        Log.d("BoardView", "onBackPressed")
+        engine.reset()
+    }
+
+    fun onPlusPressed() {
+        framesPerStep = max(1, framesPerStep - 1)
+        frame = min(frame, framesPerStep - 1)
+    }
+
+    fun onMinusPressed() {
+        framesPerStep += 1
     }
 
     /**
@@ -83,7 +91,9 @@ class BoardView @JvmOverloads constructor(
      **/
     fun onLevelSelected(level: Int) {
         // TODO NOT IMPLEMENTED YET
-        Log.d("BoardView", "onLevelSelected $level")
+        running = false
+        engine.level = level
+        engine.reset()
     }
 
     override fun onAttachedToWindow() {
@@ -174,6 +184,9 @@ class BoardView @JvmOverloads constructor(
 
         paint.color = Color.BLACK
         paint.textSize = 60F
-        canvas.drawText("${engine.position}", 20F, 1200F, paint)
+
+        if (running) {
+            canvas.drawText("Moving to ${engine.position.x}:${engine.position.y}", 20F, 1200F, paint)
+        }
     }
 }
