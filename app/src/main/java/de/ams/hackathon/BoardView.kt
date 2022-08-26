@@ -1,5 +1,14 @@
 package de.ams.hackathon
 
+/* TODOs
+
+1) Game states - run, finish (success/fail)
+2) Select level, call engine start/stop
+3) game ui (buttons, interactions)
+4) graphics
+
+ */
+
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -31,6 +40,8 @@ class BoardView @JvmOverloads constructor(
         Color.WHITE,   // fCoin
         Color.MAGENTA,
         Color.GREEN,    // fDestination
+        Color.GREEN,
+        Color.GREEN,    // fOrigin
         Color.GREEN
     )
 
@@ -79,6 +90,7 @@ class BoardView @JvmOverloads constructor(
         super.onAttachedToWindow()
 
         launch {
+            engine.reset()
             engine.path =
                 router.solve(width, height, engine.world, engine.origin, engine.destination)
 
@@ -99,7 +111,7 @@ class BoardView @JvmOverloads constructor(
 
         // draw world
 
-        val size = width / engine.columns
+        val size = width.toFloat() / engine.columns.toFloat()
 
         for (y in 0 until engine.rows) {
             for (x in 0 until engine.columns) {
@@ -107,7 +119,7 @@ class BoardView @JvmOverloads constructor(
                 val x2 = x1 + size
                 val y1 = y * size
                 val y2 = y1 + size
-                rect.set(x1, y1, x2, y2)
+                rect.set(x1.roundToInt(), y1.roundToInt(), x2.roundToInt(), y2.roundToInt())
 
                 val type = engine.world[x][y]
                 paint.color = colors[type]
@@ -116,6 +128,14 @@ class BoardView @JvmOverloads constructor(
                 when (type) {
                     fCoin -> {
                         paint.color = Color.YELLOW
+                        canvas.drawCircle((x1 + x2) / 2F, (y1 + y2) / 2F, size / 2F, paint)
+                    }
+                    fDestination -> {
+                        paint.color = Color.RED
+                        canvas.drawCircle((x1 + x2) / 2F, (y1 + y2) / 2F, size / 2F, paint)
+                    }
+                    fOrigin -> {
+                        paint.color = Color.CYAN
                         canvas.drawCircle((x1 + x2) / 2F, (y1 + y2) / 2F, size / 2F, paint)
                     }
                 }
