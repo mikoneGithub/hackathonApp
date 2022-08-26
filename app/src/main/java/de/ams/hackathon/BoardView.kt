@@ -15,6 +15,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -62,9 +63,28 @@ class BoardView @JvmOverloads constructor(
     private var frame = 0
     private var running = true
 
-    // TODO KON: Hier hätte ich gerne die Callbacks von den Buttons
-    fun pauseTapped() {}
-    // undsoweiterundsofort
+    fun onPlayPressed() {
+        // TODO NOT IMPLEMENTED YET
+        Log.d("BoardView", "onPlayPressed")
+    }
+
+    fun onPausePressed() {
+        // TODO NOT IMPLEMENTED YET
+        Log.d("BoardView", "onPausePressed")
+    }
+
+    fun onBackPressed() {
+        // TODO NOT IMPLEMENTED YET
+        Log.d("BoardView", "onBackPressed")
+    }
+
+    /**
+     * @param level Level 0 - 9
+     **/
+    fun onLevelSelected(level: Int) {
+        // TODO NOT IMPLEMENTED YET
+        Log.d("BoardView", "onLevelSelected $level")
+    }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
