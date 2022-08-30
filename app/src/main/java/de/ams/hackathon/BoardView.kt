@@ -17,6 +17,7 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import androidx.core.graphics.toColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -38,8 +39,8 @@ class BoardView @JvmOverloads constructor(
     private val colors = arrayOf(
         Color.BLACK,    // fWall
         Color.WHITE,    // fEmpty
-        Color.RED,
-        Color.WHITE,   // fCoin
+        Color.LTGRAY,
+        Color.WHITE,    // fCoin
         Color.MAGENTA,
         Color.GREEN,    // fDestination
         Color.GREEN,
@@ -137,7 +138,7 @@ class BoardView @JvmOverloads constructor(
 
                 when (type) {
                     fCoin -> {
-                        paint.color = Color.YELLOW
+                        paint.color = 0xffff8000.toInt()
                         canvas.drawCircle((x1 + x2) / 2F, (y1 + y2) / 2F, size / 2F, paint)
                     }
                     fDestination -> {
@@ -168,7 +169,7 @@ class BoardView @JvmOverloads constructor(
 
         // draw player
 
-        val d = frame.toDouble() / framesPerStep.toDouble()
+        val d = if (running) frame.toDouble() / framesPerStep.toDouble() else 1.0
         val d1 = 1.0 - d
 
         val x1 =
@@ -186,7 +187,28 @@ class BoardView @JvmOverloads constructor(
         paint.textSize = 60F
 
         if (running) {
-            canvas.drawText("Moving to ${engine.position.x}:${engine.position.y}", 20F, 1200F, paint)
+            canvas.drawText("Moving to ${engine.position.x}:${engine.position.y}\nStep ${engine.step+1}/${engine.path.size}", 20F, 1200F, paint)
+        } else {
+            if (engine.step == engine.path.size) {
+                val success = engine.destination == engine.position
+                if (success) {
+                    paint.color = 0xff008020.toInt()
+                    canvas.drawText("BOOYAH you reached the destination!", 20F, 1200F, paint)
+                    canvas.drawText("You walked ${engine.path.size} steps.", 20F, 1300F, paint)
+                    canvas.drawText("Travel cost: \$${engine.path.size - engine.collected * 5}", 20F, 1500F, paint)
+                } else {
+                    paint.color = Color.RED
+                    canvas.drawText("You missed the target.", 20F, 1200F, paint)
+                }
+            } else {
+                if (engine.dead) {
+                    // probably dead
+                    paint.color = Color.RED
+                    canvas.drawText("You are out of bounds or ran into a wall", 20F, 1200F, paint)
+                }
+            }
         }
+
+        canvas.drawText("Collected ${engine.collected} coins", 20F, 1400F, paint)
     }
 }

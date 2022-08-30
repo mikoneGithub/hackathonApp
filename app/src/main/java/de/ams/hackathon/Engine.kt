@@ -29,6 +29,9 @@ class Engine {
     val south = 2
     val west = 3
 
+    var dead = false
+    var collected = 0
+
     val rows = 33
     val columns = 33
     var level = 0
@@ -51,6 +54,26 @@ class Engine {
 
                 row = row shr 1
             }
+
+            dead = false
+        }
+
+        var rand: UInt = level.toUInt()
+        val mul: UInt = 1103515245.toUInt()
+        val inc: UInt = 12345.toUInt()
+
+        var coins = 0
+
+        while (coins < 50) {
+            rand = rand * mul + inc
+            val pos = rand shr 16
+            val x = (pos % columns.toUInt()).toInt()
+            val y = ((pos / rows.toUInt()) % rows.toUInt()).toInt()
+
+            if (world[x][y] == fEmpty) {
+                world[x][y] = fCoin
+                coins++
+            }
         }
 
         world[0][1] = fOrigin
@@ -60,6 +83,8 @@ class Engine {
         lastPosition = Point(origin.x, origin.y)
         step = 0
 
+        collected = 0
+
         return
     }
 
@@ -67,9 +92,11 @@ class Engine {
         print(step)
         print(path.size)
 
+        if (dead) {
+            reset()
+        }
+
         if (step >= path.size) {
-            step = 0
-            position = Point(origin.x, origin.y)
             return false
         }
 
@@ -83,17 +110,24 @@ class Engine {
             3 -> position.x -= 1
         }
 
+        lastPosition = Point(old.x, old.y)
+
         if ((position.x >= columns) or (position.y >= rows) or (position.x < 0) or (position.y < 0)) {
             print("You are out of bounds")
-            position = old
+            dead = true
+            return false
         } else
         // all walkable fields have bit 0 set
             if (world[position.x][position.y] and 1 == 0) {
                 // fail
                 print("You walked into a wall")
-                position = old
+                dead = true
                 return false
             } else {
+                if (world[position.x][position.y] == fCoin) {
+                    collected += 1
+                }
+
                 lastPosition = Point(old.x, old.y)
                 world[position.x][position.y] = 2
             }
