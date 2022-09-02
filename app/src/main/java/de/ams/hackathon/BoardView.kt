@@ -40,9 +40,9 @@ class BoardView @JvmOverloads constructor(
         Color.LTGRAY,
         Color.WHITE,    // fCoin
         Color.MAGENTA,
-        Color.GREEN,    // fDestination
+        0xFF2b6fc1.toInt(), // fDestination
         Color.GREEN,
-        Color.GREEN,    // fOrigin
+        Color.LTGRAY,    // fOrigin
         Color.GREEN
     )
 
@@ -153,12 +153,10 @@ class BoardView @JvmOverloads constructor(
                         canvas.drawOval(x1 + size * clipped * 0.5F + 1F, y1 + 1F, x2 - size * clipped * 0.5F - 1F, y2 - 1F, paint)
                     }
                     fDestination -> {
-                        paint.color = Color.RED
-                        canvas.drawCircle((x1 + x2) / 2F, (y1 + y2) / 2F, size / 2F, paint)
+                        paint.color = 0xFF2b6fc1.toInt();
                     }
                     fOrigin -> {
-                        paint.color = Color.CYAN
-                        canvas.drawCircle((x1 + x2) / 2F, (y1 + y2) / 2F, size / 2F, paint)
+                        paint.color = Color.LTGRAY;
                     }
                 }
             }
