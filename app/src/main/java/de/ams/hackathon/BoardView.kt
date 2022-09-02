@@ -10,10 +10,7 @@ package de.ams.hackathon
  */
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Rect
+import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
@@ -25,6 +22,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.lang.Integer.max
 import java.lang.Integer.min
+import java.lang.Math.sin
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.roundToInt
 
@@ -34,7 +32,7 @@ class BoardView @JvmOverloads constructor(
     defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr), CoroutineScope {
 
-    private val engine = Engine()
+    val engine = Engine()
 
     private val colors = arrayOf(
         Color.BLACK,    // fWall
@@ -54,24 +52,27 @@ class BoardView @JvmOverloads constructor(
         color = colors[0]
     }
 
-    private val router = BasicRouter()
+    private var router = Router()
 
     private val updateJob = Job()
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + updateJob
 
     private val rect = Rect()
-
-    private var framesPerStep = 2 //  == 1 / speed
+    private var tick: UInt = 0U
+    private var framesPerStep = 10 //  == 1 / speed
     private var frame = 0
-    private var running = true
+    var running = true
 
     fun onPlayPressed() {
-        running = true
+        running = !running
     }
 
-    fun onPausePressed() {
-        running = false
+    fun onToggleRouter() {
+        engine.basic = !engine.basic
+
+        router = if (engine.basic) BasicRouter() else AdvancedRouter()
+        onLevelSelected(engine.level)
     }
 
     fun onBackPressed() {
@@ -95,6 +96,7 @@ class BoardView @JvmOverloads constructor(
         running = false
         engine.level = level
         engine.reset()
+        engine.path = router.solve(engine.columns, engine.columns, engine.world, engine.origin, engine.destination)
     }
 
     override fun onAttachedToWindow() {
@@ -103,7 +105,7 @@ class BoardView @JvmOverloads constructor(
         launch {
             engine.reset()
             engine.path =
-                router.solve(width, height, engine.world, engine.origin, engine.destination)
+                router.solve(engine.columns, engine.columns, engine.world, engine.origin, engine.destination)
 
             while (true) {
                 invalidate()
@@ -120,12 +122,18 @@ class BoardView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
+        tick++
+
         // draw world
 
         val size = width.toFloat() / engine.columns.toFloat()
 
         for (y in 0 until engine.rows) {
             for (x in 0 until engine.columns) {
+                val thisTick = tick + (y * engine.columns + x).toUInt()
+                val phase = ((thisTick % 50U).toFloat() / 50F * 2F * 3.1415F).toDouble()
+                val delta = 0.5F + (0.5F * sin(phase).toFloat())
+
                 val x1 = x * size
                 val x2 = x1 + size
                 val y1 = y * size
@@ -138,8 +146,11 @@ class BoardView @JvmOverloads constructor(
 
                 when (type) {
                     fCoin -> {
+                        val clipped = delta * 0.8F
                         paint.color = 0xffff8000.toInt()
-                        canvas.drawCircle((x1 + x2) / 2F, (y1 + y2) / 2F, size / 2F, paint)
+                        canvas.drawOval(x1 + size * clipped * 0.5F, y1, x2 - size * clipped * 0.5F, y2, paint)
+                        paint.color = 0xffffb020.toInt()
+                        canvas.drawOval(x1 + size * clipped * 0.5F + 1F, y1 + 1F, x2 - size * clipped * 0.5F - 1F, y2 - 1F, paint)
                     }
                     fDestination -> {
                         paint.color = Color.RED
@@ -172,6 +183,10 @@ class BoardView @JvmOverloads constructor(
         val d = if (running) frame.toDouble() / framesPerStep.toDouble() else 1.0
         val d1 = 1.0 - d
 
+        val thisTick = tick
+        val phase = ((thisTick % 20U).toFloat() / 20F * 2F * 3.1415F).toDouble()
+        val delta = 0.5F + (0.5F * sin(phase).toFloat())
+
         val x1 =
             (engine.position.x.toDouble() * d + engine.lastPosition.x.toDouble() * d1) * size.toDouble()
         val x2 = x1 + size
@@ -179,9 +194,12 @@ class BoardView @JvmOverloads constructor(
             (engine.position.y.toDouble() * d + engine.lastPosition.y.toDouble() * d1) * size.toDouble()
         val y2 = y1 + size
 
-        rect.set(x1.roundToInt(), y1.roundToInt(), x2.roundToInt(), y2.roundToInt())
-        paint.color = Color.GREEN
-        canvas.drawRect(rect, paint)
+        val direction = -90 + 90 * engine.currentDirection
+
+        val r = RectF(x1.toFloat(), y1.toFloat(), x2.toFloat(), y2.toFloat())
+        paint.color = 0xffff2000.toInt()
+        canvas.drawArc(r, direction + 45F * delta, 360F - 90F * delta , true, paint)
+        // canvas.drawRect(rect, paint)
 
         paint.color = Color.BLACK
         paint.textSize = 60F

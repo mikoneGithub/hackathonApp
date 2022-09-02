@@ -29,12 +29,15 @@ class Engine {
     val south = 2
     val west = 3
 
+    var currentDirection = east
+
     var dead = false
     var collected = 0
 
     val rows = 33
     val columns = 33
     var level = 0
+    var basic = true
 
     val origin: Point = Point(0, 1)
     val destination: Point = Point(columns - 1, rows - 2)
@@ -101,9 +104,11 @@ class Engine {
         }
 
         val old = Point(position.x, position.y)
-        world[position.x][position.y] = 1
+        // world[position.x][position.y] = 1
 
-        when (path[step]) {
+        currentDirection = path[step]
+
+        when (currentDirection) {
             0 -> position.y -= 1
             1 -> position.x += 1
             2 -> position.y += 1
@@ -124,12 +129,12 @@ class Engine {
                 dead = true
                 return false
             } else {
-                if (world[position.x][position.y] == fCoin) {
+                if ((world[position.x][position.y] == fCoin) && !basic) {
                     collected += 1
+                    world[position.x][position.y] = fEmpty
                 }
 
                 lastPosition = Point(old.x, old.y)
-                world[position.x][position.y] = 2
             }
 
         step++

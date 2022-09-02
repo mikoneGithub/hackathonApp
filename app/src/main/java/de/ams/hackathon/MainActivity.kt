@@ -4,9 +4,8 @@ import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageButton
 import de.ams.hackathon.databinding.ActivityMainBinding
-import kotlin.math.max
-import kotlin.math.min
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,10 +35,21 @@ class MainActivity : AppCompatActivity() {
     private fun initClickListeners(binding: ActivityMainBinding) {
         binding.btnPlay.setOnClickListener {
             binding.boardView.onPlayPressed()
+
+            // toggle icon
+            val name = if (binding.boardView.running) "de.ams.hackathon:drawable/ic_baseline_pause_circle_outline_24" else "de.ams.hackathon:drawable/ic_baseline_play_arrow_24"
+            val button = binding.btnPlay as AppCompatImageButton
+            val res = resources.getIdentifier(name, null, null)
+            button.setImageResource(res)
         }
 
         binding.btnPause.setOnClickListener {
-            binding.boardView.onPausePressed()
+            binding.boardView.onToggleRouter()
+
+            val name = if (binding.boardView.engine.basic) "de.ams.hackathon:drawable/alpha_a_circle" else "de.ams.hackathon:drawable/alpha_b_circle"
+            val button = binding.btnPause as AppCompatImageButton
+            val res = resources.getIdentifier(name, null, null)
+            button.setImageResource(res)
         }
 
         binding.btnBack.setOnClickListener {

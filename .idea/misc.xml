@@ -3,7 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../Library/Android/sdk/platforms/android-32/data/res/layout/sms_short_code_confirmation_dialog.xml" value="0.23697916666666666" />
+        <entry key="app/src/main/res/drawable/alpha_a_circle.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/alpha_b_circle.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_baseline_minus_24.xml" value="0.2695" />
+        <entry key="app/src/main/res/drawable/ic_baseline_pause_circle_outline_24.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2682370820668693" />
         <entry key="app/src/main/res/layout/list_item.xml" value="0.22418478260869565" />
       </map>
