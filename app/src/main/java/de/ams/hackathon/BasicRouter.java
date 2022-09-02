@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import kotlin.UIntArray;
 
 public class BasicRouter extends Router {
-
     private int[][] world;
     private int[][] distance;
 
