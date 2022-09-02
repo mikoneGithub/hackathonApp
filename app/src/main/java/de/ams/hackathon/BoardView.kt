@@ -52,7 +52,7 @@ class BoardView @JvmOverloads constructor(
         color = colors[0]
     }
 
-    private var router = Router()
+    private var router: Router = BasicRouter()
 
     private val updateJob = Job()
     override val coroutineContext: CoroutineContext
