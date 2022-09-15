@@ -17,7 +17,7 @@ public class Router {
     public static final int fDestination = 5;
     public static final int fOrigin = 7;
 
-    public int[] solve(int width, int height, @NotNull int[][] world, @NotNull Point origin, @NotNull Point destination) {
+    public int[] solve(int width, int height, @NotNull int[][] world, @NotNull Point origin, @NotNull Point destination, int coinValue) {
         return new int[0];
     }
 

@@ -39,6 +39,8 @@ val levels = longArrayOf(
 
 class Engine {
 
+    val coinValue = 9
+
     val north = 0
     val east = 1
     val south = 2

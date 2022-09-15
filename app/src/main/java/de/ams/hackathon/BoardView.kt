@@ -96,7 +96,7 @@ class BoardView @JvmOverloads constructor(
         running = false
         engine.level = level
         engine.reset()
-        engine.path = router.solve(engine.columns, engine.columns, engine.world, engine.origin, engine.destination)
+        engine.path = router.solve(engine.columns, engine.columns, engine.world, engine.origin, engine.destination, engine.coinValue)
     }
 
     override fun onAttachedToWindow() {
@@ -105,7 +105,7 @@ class BoardView @JvmOverloads constructor(
         launch {
             engine.reset()
             engine.path =
-                router.solve(engine.columns, engine.columns, engine.world, engine.origin, engine.destination)
+                router.solve(engine.columns, engine.columns, engine.world, engine.origin, engine.destination, engine.coinValue)
 
             while (true) {
                 invalidate()
@@ -211,7 +211,7 @@ class BoardView @JvmOverloads constructor(
                     paint.color = 0xff008020.toInt()
                     canvas.drawText("BOOYAH you reached the destination!", 20F, 1200F, paint)
                     canvas.drawText("You walked ${engine.path.size} steps.", 20F, 1300F, paint)
-                    canvas.drawText("Travel cost: \$${engine.path.size - engine.collected * 9}", 20F, 1500F, paint)
+                    canvas.drawText("Travel cost: \$${engine.path.size - engine.collected * engine.coinValue}", 20F, 1500F, paint)
                 } else {
                     paint.color = Color.RED
                     canvas.drawText("You missed the target.", 20F, 1200F, paint)
